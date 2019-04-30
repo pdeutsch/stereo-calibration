@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.11)
 project(CALIB_CAM)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(OpenCV REQUIRED)
@@ -17,3 +19,4 @@ target_link_libraries(calibrate_stereo ${OpenCV_LIBS} "-lpopt")
 
 add_executable(undistort_rectify undistort_rectify.cpp)
 target_link_libraries(undistort_rectify ${OpenCV_LIBS} "-lpopt")
+
