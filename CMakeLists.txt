@@ -20,3 +20,5 @@ target_link_libraries(calibrate_stereo ${OpenCV_LIBS} "-lpopt")
 add_executable(undistort_rectify undistort_rectify.cpp)
 target_link_libraries(undistort_rectify ${OpenCV_LIBS} "-lpopt")
 
+add_executable(show_both show_both.cpp)
+target_link_libraries(show_both ${OpenCV_LIBS} "-lpopt")

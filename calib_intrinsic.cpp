@@ -31,9 +31,11 @@ void setup_calibration(int board_width, int board_height, int num_imgs,
 
   for (int k = 1; k <= num_imgs; k++) {
     char img_file[100];
-    sprintf(img_file, "%s%s%d.%s", imgs_directory, imgs_filename, k, extension);
-    if(!doesExist(img_file))
+    sprintf(img_file, "%s%s%03d.%s", imgs_directory, imgs_filename, k, extension);
+    if(!doesExist(img_file)) {
+        cout << "Can't find file: " << img_file << endl;
       continue;
+    }
     img = imread(img_file, IMREAD_COLOR);
     cv::cvtColor(img, gray, COLOR_BGR2GRAY);
 

@@ -62,6 +62,9 @@ int main(int argc, char const *argv[])
   
   imwrite(leftout_filename, imgU1);
   imwrite(rightout_filename, imgU2);
+  imshow("IMG1", imgU1);
+  imshow("IMG2", imgU2);
+  waitKey(0);
 
   return 0;
 }
