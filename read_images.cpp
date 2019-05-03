@@ -29,17 +29,21 @@ int main(int argc, char const *argv[])
   int c;
   while((c = popt.getNextOpt()) >= 0) {}
 
-  VideoCapture cap1(0);
-  VideoCapture cap2(1);
+  VideoCapture cap1(1);
+  VideoCapture cap2(2);
   Mat img1, img_res1, img2, img_res2;
-  while (1) {
+  int ch=0;
+  int n = (ch & 0xFF);
+  cout << "Starting, ch=" << ch << ", n=" << n << endl;
+  while ((ch & 0xFF) != 27) {
     cap1 >> img1;
     cap2 >> img2;
     resize(img1, img_res1, Size(im_width, im_height));
     resize(img2, img_res2, Size(im_width, im_height));
     imshow("IMG1", img_res1);
     imshow("IMG2", img_res2);
-    if (waitKey(30) > 0) {
+    ch = waitKey(30);
+    if ((ch & 0xFF) == 32) {
       x++;
       char filename1[200], filename2[200];
       sprintf(filename1, "%sleft%d.%s", imgs_directory, x, extension);
@@ -49,5 +53,8 @@ int main(int argc, char const *argv[])
       imwrite(filename2, img_res2);
     }
   }
+  cout << "DONE" << endl;
+
+  destroyAllWindows();
   return 0;
 }

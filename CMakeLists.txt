@@ -22,3 +22,6 @@ target_link_libraries(undistort_rectify ${OpenCV_LIBS} "-lpopt")
 
 add_executable(show_both show_both.cpp)
 target_link_libraries(show_both ${OpenCV_LIBS} "-lpopt")
+
+add_executable(show_quasi show_quasi.cpp)
+target_link_libraries(show_quasi ${OpenCV_LIBS} "-lpopt")

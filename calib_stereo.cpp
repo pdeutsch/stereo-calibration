@@ -25,10 +25,15 @@ void load_image_points(int board_width, int board_height, int num_imgs, float sq
 
   for (int i = 1; i <= num_imgs; i++) {
     char left_img[100], right_img[100];
-    sprintf(left_img, "%s%s%03d.%s", leftimg_dir, leftimg_filename, i, extension);
-    sprintf(right_img, "%s%s%03d.%s", rightimg_dir, rightimg_filename, i, extension);
+    sprintf(left_img, "%s%s%02d.%s", leftimg_dir, leftimg_filename, i, extension);
+    sprintf(right_img, "%s%s%02d.%s", rightimg_dir, rightimg_filename, i, extension);
+    cout << "Reading left image: " << left_img << endl;
     img1 = imread(left_img, IMREAD_COLOR);
     img2 = imread(right_img, IMREAD_COLOR);
+    if (img1.data == NULL || img2.data == NULL) {
+        cout << "An image file not found" << endl;
+        exit(-1);
+    }
     cvtColor(img1, gray1, COLOR_BGR2GRAY);
     cvtColor(img2, gray2, COLOR_BGR2GRAY);
 
