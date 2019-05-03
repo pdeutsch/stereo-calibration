@@ -16,6 +16,7 @@ int main(int argc, char const *argv[])
   char* calib_file;
   char* leftout_filename;
   char* rightout_filename;
+  int   view_flag = 0;
 
   static struct poptOption options[] = {
     { "leftimg_filename",'l',POPT_ARG_STRING,&leftimg_filename,0,"Left imgage path","STR" },
@@ -23,6 +24,7 @@ int main(int argc, char const *argv[])
     { "calib_file",'c',POPT_ARG_STRING,&calib_file,0,"Stereo calibration file","STR" },
     { "leftout_filename",'L',POPT_ARG_STRING,&leftout_filename,0,"Left undistorted imgage path","STR" },
     { "rightout_filename",'R',POPT_ARG_STRING,&rightout_filename,0,"Right undistorted image path","STR" },
+    { "view",'v',POPT_ARG_NONE, &view_flag, 0, "View image", NULL },
     POPT_AUTOHELP
     { NULL, 0, 0, NULL, 0, NULL, NULL }
   };
@@ -37,6 +39,12 @@ int main(int argc, char const *argv[])
   Mat D1, D2;
   Mat img1 = imread(leftimg_filename, IMREAD_COLOR);
   Mat img2 = imread(rightimg_filename, IMREAD_COLOR);
+
+  if (img1.data == NULL || img2.data == NULL) {
+    cout << "Left: " << leftimg_filename << ", right: " << rightimg_filename << endl;
+    cout << "One of the image files does not exist" << endl;
+    exit(-1);
+  }
 
   cv::FileStorage fs1(calib_file, cv::FileStorage::READ);
   fs1["K1"] >> K1;
@@ -62,9 +70,12 @@ int main(int argc, char const *argv[])
   
   imwrite(leftout_filename, imgU1);
   imwrite(rightout_filename, imgU2);
-  imshow("IMG1", imgU1);
-  imshow("IMG2", imgU2);
-  waitKey(0);
+  if (view_flag) {
+    imshow("IMG1", imgU1);
+    imshow("IMG2", imgU2);
+    waitKey(0);
+    destroyAllWindows();
+  }
 
   return 0;
 }

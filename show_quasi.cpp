@@ -33,6 +33,7 @@ int main(int argc, char** argv)
     char* calib_file;
     char* leftout_filename;
     char* rightout_filename;
+    int   view_flag = 0;
 
     static struct poptOption options[] = {
       { "leftimg_filename",'l',POPT_ARG_STRING,&leftimg_filename,0,"Left imgage path","STR" },
@@ -40,6 +41,7 @@ int main(int argc, char** argv)
       { "calib_file",'c',POPT_ARG_STRING,&calib_file,0,"Stereo calibration file","STR" },
       { "leftout_filename",'L',POPT_ARG_STRING,&leftout_filename,0,"Left undistorted imgage path","STR" },
       { "rightout_filename",'R',POPT_ARG_STRING,&rightout_filename,0,"Right undistorted image path","STR" },
+      { "view",'v',POPT_ARG_NONE, &view_flag, 0, "View image", NULL },
       POPT_AUTOHELP
       { NULL, 0, 0, NULL, 0, NULL, NULL }
     };
@@ -89,12 +91,8 @@ int main(int argc, char** argv)
     cv::remap(img_orig_left, img_fixed_left, lmapx, lmapy, cv::INTER_LINEAR);
     cv::remap(img_orig_right, img_fixed_right, rmapx, rmapy, cv::INTER_LINEAR);
 
-    Mat img_rot_left, img_rot_right;
-    rotate(img_fixed_left, img_rot_left, ROTATE_180);
-    rotate(img_fixed_right, img_rot_right, ROTATE_180);
-
-    imwrite(leftout_filename, img_rot_left);
-    imwrite(rightout_filename, img_rot_right);
+    imwrite(leftout_filename, img_fixed_left);
+    imwrite(rightout_filename, img_fixed_right);
 
     cout << "created left and right images, creating disparity" << endl;
 
@@ -102,28 +100,28 @@ int main(int argc, char** argv)
 
     int i = 0;
     int64 t = getTickCount();
-    for (i = 0; i < 5; i++) {
-        t = getTickCount();
-
-        quasi(img_rot_left, img_rot_right, disp);
-    }
+    quasi(img_fixed_left, img_fixed_right, disp);
     t = getTickCount() - t;
     printf("Time elapsed: %fms\n", t*1000/getTickFrequency());
 
     disp.convertTo(disp8, CV_8U);
+    imwrite("disparity_q.png", disp8);
 
-    namedWindow("left", 1);
-    imshow("left", img_rot_left);
-    moveWindow("left", 5, 5);
-    namedWindow("right", 1);
-    imshow("right", img_rot_right);
-    moveWindow("right", 800, 5);
-    namedWindow("disparity", 0);
-    imshow("disparity", disp8);
-    moveWindow("disparity", 5, 500);
-    printf("press any key to continue...");
-    fflush(stdout);
-    waitKey();
+    if (view_flag) {
+        namedWindow("left", 1);
+        imshow("left", img_fixed_left);
+        moveWindow("left", 5, 5);
+        namedWindow("right", 1);
+        imshow("right", img_fixed_right);
+        moveWindow("right", 800, 5);
+        namedWindow("disparity", 0);
+        imshow("disparity", disp8);
+        moveWindow("disparity", 5, 500);
+        printf("press any key to continue...");
+        fflush(stdout);
+        waitKey();
+        destroyAllWindows();
+    }
     printf("\n");
 
     return 0;
