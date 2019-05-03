@@ -11,6 +11,7 @@ from __future__ import print_function
 
 import numpy as np
 import cv2 as cv
+import time
 
 ply_header = '''ply
 format ascii 1.0
@@ -24,6 +25,8 @@ property uchar blue
 end_header
 '''
 
+current_milli_time = lambda: time.time() * 1000
+
 def write_ply(fn, verts, colors):
     verts = verts.reshape(-1, 3)
     colors = colors.reshape(-1, 3)
@@ -35,15 +38,16 @@ def write_ply(fn, verts, colors):
 
 def main():
     print('loading images...')
-    #imgL = cv.pyrDown(cv.imread('l08.png'))  # downscale images for faster processing
-    #imgR = cv.pyrDown(cv.imread('r08.png'))
-    imgL = cv.imread('l08.png')
-    imgR = cv.imread('r08.png')
+    imgL = cv.pyrDown(cv.imread('l08.png'))  # downscale images for faster processing
+    imgR = cv.pyrDown(cv.imread('r08.png'))
+    #imgL = cv.imread('l08.png')
+    #imgR = cv.imread('r08.png')
 
     # disparity range is tuned for 'aloe' image pair
     window_size = 3
     min_disp = 16
     num_disp = 112-min_disp
+    tm1 = current_milli_time()
     stereo = cv.StereoSGBM_create(minDisparity = min_disp,
         numDisparities = num_disp,
         blockSize = 16,
@@ -56,9 +60,13 @@ def main():
     )
 
     print('computing disparity...')
+    tm2 = current_milli_time()
     disp_orig = stereo.compute(imgL, imgR)
+    tm3 = current_milli_time()
     cv.imwrite('disp_sgbm.png', disp_orig)
     disp = disp_orig.astype(np.float32) / 16.0
+
+    print('delta1: {:0.2f},  delta2: {:0.2f}'.format( tm2 - tm1, tm3 - tm2))
 
     print('generating 3d point cloud...',)
     h, w = imgL.shape[:2]
