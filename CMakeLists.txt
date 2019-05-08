@@ -25,3 +25,6 @@ target_link_libraries(show_both ${OpenCV_LIBS} "-lpopt")
 
 add_executable(show_quasi show_quasi.cpp)
 target_link_libraries(show_quasi ${OpenCV_LIBS} "-lpopt")
+
+add_executable(stereo_live stereo_live.cpp)
+target_link_libraries(stereo_live ${OpenCV_LIBS} "-lpopt")
