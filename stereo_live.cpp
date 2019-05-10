@@ -159,6 +159,11 @@ int main(int argc, char** argv)
             ch = waitKey(1) & 0xFF;
             printf("\n");
         }
+        if (ch == (int)'s') {
+            cout << "Saving images" << endl;
+            imwrite("left_s.jpg", imgLr);
+            imwrite("right_s.jpg", imgRr);
+        }
     }
 
     leftVid.release();
